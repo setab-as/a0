@@ -15,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,9 +48,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun DecisionScreen(modifier: Modifier = Modifier) {
-    var answer by remember { mutableStateOf("") }
+    var answer by remember { mutableStateOf("Want to go?") }
     var isYes by remember { mutableStateOf(false) }
-    val clickCount = remember { mutableStateOf(0) }
+    var clickCount by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -65,7 +66,7 @@ fun DecisionScreen(modifier: Modifier = Modifier) {
         )
         // click counter
         Text(
-            text = "Click count: ${clickCount.value}",
+            text = "Click count: $clickCount",
             fontSize = 24.sp,
             modifier = Modifier.padding(16.dp)
         )
@@ -73,7 +74,11 @@ fun DecisionScreen(modifier: Modifier = Modifier) {
         Text(
             text = answer,
             fontSize = 48.sp,
-            color = if (isYes) Color.Green else Color.Red, // green if yes and red if no
+            color = if (clickCount > 0) {
+                if (isYes) Color.Green else Color.Red
+            } else {
+                Color.Unspecified
+            }, // green if "yes", red if "no" but only change colours after clicking it atleast once
             modifier = Modifier.padding(16.dp)
         )
         // below is the "OKAY!", "MEH...", and "NO." buttons
@@ -93,7 +98,7 @@ fun DecisionScreen(modifier: Modifier = Modifier) {
                         "No"
                     }
 
-                    clickCount.value++ // increment up the click counter
+                    clickCount++ // increment up the click counter
                 }
             ) {
                 Text("OKAY!", fontSize = 24.sp)
@@ -109,7 +114,7 @@ fun DecisionScreen(modifier: Modifier = Modifier) {
                         "No"
                     }
 
-                    clickCount.value++ // increment same as before
+                    clickCount++ // increment same as before
                 }
             ) {
                 Text("MEH...", fontSize = 24.sp)
@@ -125,7 +130,7 @@ fun DecisionScreen(modifier: Modifier = Modifier) {
                         "No"
                     }
 
-                    clickCount.value++ // increment same as before
+                    clickCount++ // increment same as before
                 }
             ) {
                 Text("NO.", fontSize = 24.sp)
